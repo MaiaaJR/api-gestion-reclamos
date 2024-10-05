@@ -1,0 +1,87 @@
+1. Middleware y formato de datos:
+El backend está usando bodyParser para parsear JSON. Esto significa que el frontend debe enviar las solicitudes en formato 
+JSON cuando interactúe con la API.
+
+
+2. Autenticación (Login):
+Hay tres roles con autenticación (administrador, cliente, empleado). Todos utilizan JWT para manejar los tokens de sesión. 
+--En el frontend, al realizar el login:
+Se envía el correo electrónico y la contraseña del usuario.
+Si la autenticación es exitosa, se recibe un token que debemos almacenar en el frontend (probablemente en el localStorage).
+Luego, este token se envía en las cabeceras de las futuras peticiones para que el backend autorice al usuario.
+--Perfiles:
+Clientes:
+---Registro: Se puede registrar a un cliente utilizando la ruta /api/clientes con los campos nombre, apellido, correoElectronico, y contrasenia.
+---Crear reclamo: Los clientes pueden crear reclamos enviando asunto y descripción a /api/clientes/reclamos.
+---Consultar y cancelar reclamos: Un cliente puede consultar y cancelar sus propios reclamos.
+Empleados:
+---Atender reclamos: Los empleados pueden atender reclamos que les pertenezcan, cambiando su estado.
+---Listar reclamos: Los empleados pueden listar los reclamos de su oficina.
+---Estas acciones requieren autenticación y autorización. El token de sesión debe enviarse en las cabeceras de las peticiones.
+Administradores:
+---Los administradores pueden gestionar los tipos de reclamos, empleados, oficinas y descargar estadísticas en CSV o PDF.
+---Estadísticas: Los administradores pueden obtener estadísticas de los reclamos, como el total de reclamos atendidos o pendientes.
+
+----Acciones principales----
+Login: POST /api/administradores/login
+
+CRUD de tipos de reclamos:
+Crear: POST /api/administradores/tipos-reclamos
+Listar: GET /api/administradores/tipos-reclamos
+Actualizar: PUT /api/administradores/tipos-reclamos/:id
+Eliminar: DELETE /api/administradores/tipos-reclamos/:id
+
+CRUD de empleados:
+Crear: POST /api/administradores/empleados
+Listar: GET /api/administradores/empleados
+Actualizar: PUT /api/administradores/empleados/:id
+Eliminar: DELETE /api/administradores/empleados/:id
+
+CRUD de oficinas:
+Crear: POST /api/administradores/oficinas
+Listar: GET /api/administradores/oficinas
+Actualizar: PUT /api/administradores/oficinas/:id
+Eliminar: DELETE /api/administradores/oficinas/:id
+
+Estadísticas y descargas:
+Obtener estadísticas de reclamos: GET /api/administradores/estadisticas-reclamos
+Descargar reclamos en CSV: GET /api/administradores/reclamos/descargar/csv
+Descargar reclamos en PDF: GET /api/administradores/reclamos/descargar/pdf
+
+Acciones para clientes:
+Login: POST /api/clientes/login
+Gestión de reclamos:
+Consultar reclamo: GET /api/clientes/reclamos/:id
+Cancelar reclamo: PUT /api/clientes/reclamos/:id/cancelar
+Actualizar perfil: PUT /api/clientes/perfil
+
+Acciones para empleados:
+Login: POST /api/empleados/login
+Atender reclamos: PUT /api/empleados/reclamos/:id/atender
+Aquí se cambia el estado del reclamo usando el ID del reclamo.
+
+---Probando:---
+
+1. Probar el login
+Verificar que el backend esté corriendo: Asegúrate de que el backend esté activo y que el endpoint /api/clientes/login funcione correctamente.
+Probar el formulario de login:
+Abrir el index.html en el navegador
+Haz clic en "Iniciar Sesión".
+Ingresa las credenciales de un cliente válido que tengas en la base de datos del backend 
+(por ejemplo, "correoElectronico": "sarasa@gmail.com", "contrasenia": "123456").
+Verifica si puedes iniciar sesión correctamente y si el token se guarda en localStorage.
+Mostrar mensajes de error
+
+2. Prueba el Frontend
+Abrir el index.html en el navegador
+Introduce las credenciales de un cliente existente.
+Si el inicio de sesión es exitoso, verifica que el token se almacene en el localStorage:
+Abre la consola del navegador (F12 o clic derecho -> Inspeccionar).
+Ve a la pestaña Application y busca en Local Storage para ver si el token está allí.
+
+3. Probar el Formulario de Crear Reclamo
+Abrir el index.html en el navegador
+Inicia sesión con un cliente válido para obtener el token.
+Haz clic en "Crear Reclamo" en el menú de navegación.
+Completa el formulario con un asunto y una descripción, y envíalo.
+Verifica que el reclamo se cree correctamente (esto se confirmará con una alerta de éxito).
